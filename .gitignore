@@ -47,3 +47,8 @@ out/
 /*.out
 out_expected.txt
 /*-timing.json
+
+# Lisp
+*.*undo-tree*
+*.fasl
+src/main/lisp/svetlyak40wt/calculate-average-*

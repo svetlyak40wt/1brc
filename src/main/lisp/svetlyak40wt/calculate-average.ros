@@ -1,0 +1,46 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros dynamic-space-size=4gb -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp
+  (ql:quickload '() :silent t))
+
+
+(defpackage :ros.script.calculate-average
+  (:use :cl))
+(in-package :ros.script.calculate-average)
+
+(declaim (optimize (debug 0) (safety 0) (speed 3)))
+
+
+(defun show-info ()
+  (format t "Lisp implementation: ~A ~A~%"
+          (lisp-implementation-type)
+          (lisp-implementation-version))
+  (format t "Compiled as:~%~A~%"
+          #.(princ-to-string (uiop:get-optimization-settings)))
+  (format t "Runtime compiler policy:~%~A~%"
+          (princ-to-string (uiop:get-optimization-settings))))
+
+
+(defun calc-lines (filename)
+  (with-open-file (s filename)
+    (loop for line = (read-line s nil nil)
+          while line
+          sum 1)))
+
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let ((filename (first argv)))
+    (cond 
+      (filename
+       (format t "Num lines: ~A~%"
+               (calc-lines filename)))
+      (t
+       (show-info)))))
+
+;;; vim: set ft=lisp lisp:
